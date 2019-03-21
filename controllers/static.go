@@ -4,9 +4,9 @@ import "github.com/LIYINGZHEN/gollery/views"
 
 func NewStatic() *Static {
 	return &Static{
-		Home:    views.NewView("bootstrap", "views/static/home.html"),
-		Contact: views.NewView("bootstrap", "views/static/contact.html"),
-		Faq:     views.NewView("bootstrap", "views/static/faq.html"),
+		Home:    views.NewView("bootstrap", "static/home"),
+		Contact: views.NewView("bootstrap", "static/contact"),
+		Faq:     views.NewView("bootstrap", "static/faq"),
 	}
 }
 
