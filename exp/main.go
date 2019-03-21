@@ -11,7 +11,15 @@ func main() {
 		panic(err)
 	}
 
-	data := struct{ Name string }{"Max Li"}
+	data := struct {
+		Name   string
+		Age    int
+		Height int
+	}{
+		"Max Li",
+		24,
+		168,
+	}
 
 	err = t.Execute(os.Stdout, data)
 	if err != nil {
