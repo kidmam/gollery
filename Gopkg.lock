@@ -9,9 +9,20 @@
   revision = "a7962380ca08b5a188038c69871b8d3fbdf31e89"
   version = "v1.7.0"
 
+[[projects]]
+  digest = "1:f7463b67871bf7fe475e2c69fb0d21ead07de5188b8d7f8abf8fc961965ed841"
+  name = "github.com/gorilla/schema"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "d0e4c24cff97ae983e9847e0ed5a02dc10013d41"
+  version = "v1.0.2"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = ["github.com/gorilla/mux"]
+  input-imports = [
+    "github.com/gorilla/mux",
+    "github.com/gorilla/schema",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
