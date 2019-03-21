@@ -8,20 +8,21 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var homeTemplate *views.View
-var contactTemplate *views.View
+var homeView *views.View
+var contactView *views.View
 
 func home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	err := homeView.Template.Execute(w, nil)
+	err := homeView.Template.ExecuteTemplate(w,
+		homeView.Layout, nil)
 	if err != nil {
 		panic(err)
 	}
 }
-
 func contact(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	err := contactView.Template.Execute(w, nil)
+	err := contactView.Template.ExecuteTemplate(w,
+		contactView.Layout, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -38,9 +39,8 @@ func notFound(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	var err error
-	homeTemplate = views.NewView("views/home.html")
-	contactTemplate = views.NewView("views/contact.html")
+	homeView = views.NewView("bootstrap", "views/home.html")
+	contactView = views.NewView("bootstrap", "views/contact.html")
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", home)
