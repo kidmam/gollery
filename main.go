@@ -1,13 +1,30 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/LIYINGZHEN/gollery/controllers"
+	"github.com/LIYINGZHEN/gollery/models"
 	"github.com/gorilla/mux"
 )
 
+const (
+	host   = "localhost"
+	port   = 5432
+	user   = "postgres"
+	dbname = "gollary"
+)
+
 func main() {
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable", host, port, user, dbname)
+	us, err := models.NewUserService(psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+	defer us.Close()
+	us.AutoMigrate()
+
 	staticC := controllers.NewStatic()
 	usersC := controllers.NewUsers()
 
