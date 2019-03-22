@@ -48,19 +48,37 @@ func (us *UserService) Close() error {
 // ByID will look up a user with the provided ID.
 func (us *UserService) ByID(id uint) (*User, error) {
 	var user User
-	err := us.db.Where("id = ?", id).First(&user).Error
-	switch err {
-	case nil:
-		return &user, nil
-	case gorm.ErrRecordNotFound:
-		return nil, ErrNotFound
-	default:
+	db := us.db.Where("id = ?", id)
+	err := first(db, &user)
+	if err != nil {
 		return nil, err
 	}
+	return &user, nil
+}
+
+// ByEmail looks up a user with the given email address and returns that user.
+func (us *UserService) ByEmail(email string) (*User, error) {
+	var user User
+	db := us.db.Where("email = ?", email)
+	err := first(db, &user)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
 
 // DestructiveReset drops the user table and rebuilds it.
 func (us *UserService) DestructiveReset() {
 	us.db.DropTableIfExists(&User{})
 	us.db.AutoMigrate(&User{})
+}
+
+// first will query using the provided gorm.DB and it will // get the first item returned and place it into dst. If
+// nothing is found in the query, it will return ErrNotFound
+func first(db *gorm.DB, dst interface{}) error {
+	err := db.First(dst).Error
+	if err == gorm.ErrRecordNotFound {
+		return ErrNotFound
+	}
+	return err
 }
