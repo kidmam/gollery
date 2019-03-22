@@ -9,7 +9,8 @@ import (
 
 var (
 	// ErrNotFound is returned when a resource cannot be found // in the database.
-	ErrNotFound = errors.New("models: resource not found")
+	ErrNotFound  = errors.New("models: resource not found")
+	ErrInvalidID = errors.New("models: ID provided was invalid")
 )
 
 // User struct defined the user data.
@@ -38,6 +39,21 @@ type UserService struct {
 // like the ID, CreatedAt, and UpdatedAt fields.
 func (us *UserService) Create(user *User) error {
 	return us.db.Create(user).Error
+}
+
+// Update will update the provided user with all of the data
+// in the provided user object.
+func (us *UserService) Update(user *User) error {
+	return us.db.Save(user).Error
+}
+
+// Delete will delete the user with the provided ID
+func (us *UserService) Delete(id uint) error {
+	if id == 0 {
+		return ErrInvalidID
+	}
+	user := User{Model: gorm.Model{ID: id}}
+	return us.db.Delete(&user).Error
 }
 
 // Close the UserService database connection.
