@@ -34,6 +34,12 @@ type UserService struct {
 	db *gorm.DB
 }
 
+// Create will create the provided user and backfill data
+// like the ID, CreatedAt, and UpdatedAt fields.
+func (us *UserService) Create(user *User) error {
+	return us.db.Create(user).Error
+}
+
 // Close the UserService database connection.
 func (us *UserService) Close() error {
 	return us.db.Close()
