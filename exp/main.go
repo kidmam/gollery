@@ -1,12 +1,14 @@
 package main
 
-import (
-	"fmt"
+type a interface {
+	run() string
+}
 
-	"github.com/LIYINGZHEN/gollery/rand"
-)
+type man struct {
+	a
+}
 
 func main() {
-	fmt.Println(rand.String(10))
-	fmt.Println(rand.RememberToken())
+	he := man{}
+	he.run()
 }
