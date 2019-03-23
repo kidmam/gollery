@@ -3,13 +3,17 @@ package models
 import (
 	"errors"
 
+	"github.com/LIYINGZHEN/gollery/hash"
 	"github.com/LIYINGZHEN/gollery/rand"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"golang.org/x/crypto/bcrypt"
 )
 
-var userPwPepper = "secret-random-string"
+const (
+	userPwPepper  = "secret-random-string"
+	hmacSecretKey = "secret-hmac-key"
+)
 
 var (
 	// ErrNotFound is returned when a resource cannot be found // in the database.
@@ -36,12 +40,17 @@ func NewUserService(connectionInfo string) (*UserService, error) {
 		return nil, err
 	}
 	db.LogMode(true)
-	return &UserService{db: db}, nil
+	hmac := hash.NewHMAC(hmacSecretKey)
+	return &UserService{
+		db:   db,
+		hmac: hmac,
+	}, nil
 }
 
 // UserService provides methods to interact with the user table.
 type UserService struct {
-	db *gorm.DB
+	db   *gorm.DB
+	hmac hash.HMAC
 }
 
 // Create will create the provided user and backfill data
