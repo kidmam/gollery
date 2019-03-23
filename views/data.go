@@ -21,6 +21,13 @@ type Data struct {
 	Yield interface{}
 }
 
+func (d *Data) AlertError(msg string) {
+	d.Alert = &Alert{
+		Level:   AlertLvlError,
+		Message: msg,
+	}
+}
+
 func (d *Data) SetAlert(err error) {
 	var msg string
 	if pErr, ok := err.(PublicError); ok {
