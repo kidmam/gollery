@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/LIYINGZHEN/gollery/hash"
 	"github.com/LIYINGZHEN/gollery/rand"
@@ -250,6 +251,19 @@ type userValidator struct {
 	hmac hash.HMAC
 }
 
+// ByEmail will normalize an email address before passing
+// it on to the database layer to perform the query.
+func (uv *userValidator) ByEmail(email string) (*User, error) {
+	user := User{
+		Email: email,
+	}
+	err := runUserValFns(&user, uv.normalizeEmail)
+	if err != nil {
+		return nil, err
+	}
+	return uv.UserDB.ByEmail(user.Email)
+}
+
 func (uv *userValidator) ByRemember(token string) (*User, error) {
 	user := User{
 		Remember: token,
@@ -266,7 +280,8 @@ func (uv *userValidator) Create(user *User) error {
 	err := runUserValFns(user,
 		uv.bcryptPassword,
 		uv.setRememberIfUnset,
-		uv.hmacRemember)
+		uv.hmacRemember,
+		uv.normalizeEmail)
 	if err != nil {
 		return err
 	}
@@ -277,7 +292,8 @@ func (uv *userValidator) Create(user *User) error {
 func (uv *userValidator) Update(user *User) error {
 	err := runUserValFns(user,
 		uv.bcryptPassword,
-		uv.hmacRemember)
+		uv.hmacRemember,
+		uv.normalizeEmail)
 	if err != nil {
 		return err
 	}
@@ -353,4 +369,10 @@ func (uv *userValidator) idGreaterThan(n uint) userValFn {
 		}
 		return nil
 	})
+}
+
+func (uv *userValidator) normalizeEmail(user *User) error {
+	user.Email = strings.ToLower(user.Email)
+	user.Email = strings.TrimSpace(user.Email)
+	return nil
 }
