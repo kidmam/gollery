@@ -112,19 +112,14 @@ type UserService interface {
 	UserDB
 }
 
-func NewUserService(connectionInfo string) (UserService, error) {
-	ug, err := newUserGorm(connectionInfo)
-	if err != nil {
-		return nil, err
-	}
+func NewUserService(db *gorm.DB) UserService {
+	ug := &userGorm{db}
 	hmac := hash.NewHMAC(hmacSecretKey)
 	uv := newUserValidator(ug, hmac)
 	return &userService{
 		UserDB: uv,
-	}, nil
+	}
 }
-
-var _ UserService = &userService{}
 
 type userService struct {
 	UserDB
@@ -157,19 +152,6 @@ func (us *userService) Authenticate(email, password string) (*User, error) {
 		return nil, err
 	}
 }
-
-func newUserGorm(connectionInfo string) (*userGorm, error) {
-	db, err := gorm.Open("postgres", connectionInfo)
-	if err != nil {
-		return nil, err
-	}
-	db.LogMode(true)
-	return &userGorm{
-		db: db,
-	}, nil
-}
-
-var _ UserDB = &userGorm{}
 
 // userGorm represents our database interaction layer
 // and implements the UserDB interface fully.
