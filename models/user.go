@@ -3,8 +3,9 @@ package models
 import (
 	"errors"
 
-	"github.com/LIYINGZHEN/gollery/hash"
-	"github.com/LIYINGZHEN/gollery/rand"
+	"lenslocked.com/hash"
+	"lenslocked.com/rand"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"golang.org/x/crypto/bcrypt"
@@ -263,15 +264,9 @@ func (uv *userValidator) ByRemember(token string) (*User, error) {
 // Create will create the provided user and backfill data
 // like the ID, CreatedAt, and UpdatedAt fields.
 func (uv *userValidator) Create(user *User) error {
-	if user.Remember == "" {
-		token, err := rand.RememberToken()
-		if err != nil {
-		}
-		user.Remember = token
-	}
-
 	err := runUserValFns(user,
 		uv.bcryptPassword,
+		uv.setRememberIfUnset,
 		uv.hmacRemember)
 	if err != nil {
 		return err
@@ -326,6 +321,18 @@ func (uv *userValidator) bcryptPassword(user *User) error {
 	}
 	user.PasswordHash = string(hashedBytes)
 	user.Password = ""
+	return nil
+}
+
+func (uv *userValidator) setRememberIfUnset(user *User) error {
+	if user.Remember != "" {
+		return nil
+	}
+	token, err := rand.RememberToken()
+	if err != nil {
+		return err
+	}
+	user.Remember = token
 	return nil
 }
 
