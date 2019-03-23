@@ -27,7 +27,17 @@ type Users struct {
 // create a new user account.
 func (u *Users) New(w http.ResponseWriter, r *http.Request) {
 	if err := u.NewView.Render(w, nil); err != nil {
-		panic(err)
+		type Alert struct {
+			Level   string
+			Message string
+		}
+		alert := Alert{
+			Level:   "success",
+			Message: "Successfully rendered a dynamic alert!",
+		}
+		if err := u.NewView.Render(w, alert); err != nil {
+			panic(err)
+		}
 	}
 }
 
