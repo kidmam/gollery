@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 
+	"github.com/LIYINGZHEN/gollery/rand"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"golang.org/x/crypto/bcrypt"
@@ -53,6 +54,15 @@ func (us *UserService) Create(user *User) error {
 	}
 	user.PasswordHash = string(hashedBytes)
 	user.Password = ""
+
+	if user.Remember == "" {
+		token, err := rand.RememberToken()
+		if err != nil {
+			return err
+		}
+		user.Remember = token
+	}
+
 	return us.db.Create(user).Error
 }
 
