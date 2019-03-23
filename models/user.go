@@ -71,6 +71,7 @@ func (us *UserService) Create(user *User) error {
 		}
 		user.Remember = token
 	}
+	user.RememberHash = us.hmac.Hash(user.Remember)
 
 	return us.db.Create(user).Error
 }
@@ -94,6 +95,9 @@ func (us *UserService) Authenticate(email, password string) (*User, error) {
 // Update will update the provided user with all of the data
 // in the provided user object.
 func (us *UserService) Update(user *User) error {
+	if user.Remember != "" {
+		user.RememberHash = us.hmac.Hash(user.Remember)
+	}
 	return us.db.Save(user).Error
 }
 
@@ -127,6 +131,19 @@ func (us *UserService) ByEmail(email string) (*User, error) {
 	var user User
 	db := us.db.Where("email = ?", email)
 	err := first(db, &user)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+// ByRemember looks up a user with the given remember token
+// and returns that user. This method will handle hashing
+// the token for us.
+func (us *UserService) ByRemember(token string) (*User, error) {
+	var user User
+	rememberHash := us.hmac.Hash(token)
+	err := first(us.db.Where("remember_hash = ?", rememberHash), &user)
 	if err != nil {
 		return nil, err
 	}
