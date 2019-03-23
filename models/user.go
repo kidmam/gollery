@@ -3,9 +3,8 @@ package models
 import (
 	"errors"
 
-	"lenslocked.com/hash"
-	"lenslocked.com/rand"
-
+	"github.com/LIYINGZHEN/gollery/hash"
+	"github.com/LIYINGZHEN/gollery/rand"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"golang.org/x/crypto/bcrypt"
@@ -287,8 +286,11 @@ func (uv *userValidator) Update(user *User) error {
 
 // Delete will delete the user with the provided ID
 func (uv *userValidator) Delete(id uint) error {
-	if id == 0 {
-		return ErrInvalidID
+	var user User
+	user.ID = id
+	err := runUserValFns(&user, uv.idGreaterThan(0))
+	if err != nil {
+		return err
 	}
 	return uv.UserDB.Delete(id)
 }
@@ -342,4 +344,13 @@ func (uv *userValidator) hmacRemember(user *User) error {
 	}
 	user.RememberHash = uv.hmac.Hash(user.Remember)
 	return nil
+}
+
+func (uv *userValidator) idGreaterThan(n uint) userValFn {
+	return userValFn(func(user *User) error {
+		if user.ID <= n {
+			return ErrInvalidID
+		}
+		return nil
+	})
 }
