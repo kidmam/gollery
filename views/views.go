@@ -1,9 +1,9 @@
 package views
 
 import (
+	"html/template"
 	"net/http"
 	"path/filepath"
-	"text/template"
 )
 
 var (
@@ -32,6 +32,15 @@ type View struct {
 }
 
 func (v *View) Render(w http.ResponseWriter, data interface{}) error {
+	w.Header().Set("Content-Type", "text/html")
+	switch data.(type) {
+	case Data:
+		// do nothing
+	default:
+		data = Data{
+			Yield: data,
+		}
+	}
 	return v.Template.ExecuteTemplate(w, v.Layout, data)
 }
 
@@ -49,12 +58,20 @@ func layoutFiles() []string {
 	return files
 }
 
+// addTemplatePath takes in a slice of strings
+// representing file paths for templates, and it prepends // the TemplateDir directory to each string in the slice //
+// Eg the input {"home"} would result in the output
+// {"views/home"} if TemplateDir == "views/"
 func addTemplatePath(files []string) {
 	for i, f := range files {
 		files[i] = TemplateDir + f
 	}
 }
 
+// addTemplateExt takes in a slice of strings
+// representing file paths for templates and it appends // the TemplateExt extension to each string in the slice //
+// Eg the input {"home"} would result in the output
+// {"home.gohtml"} if TemplateExt == ".gohtml"
 func addTemplateExt(files []string) {
 	for i, f := range files {
 		files[i] = f + TemplateExt
