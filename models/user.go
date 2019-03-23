@@ -28,6 +28,11 @@ var (
 	// ErrPasswordIncorrect is returned when an invalid password // is used when attempting to authenticate a user.
 	ErrPasswordIncorrect = errors.New("models: incorrect password provided")
 
+	// ErrPasswordTooShort is returned when a user tries to set
+	// a password that is less than 8 characters long.
+	ErrPasswordTooShort = errors.New("models: password must " +
+		"be at least 8 characters long")
+
 	// ErrEmailRequired is returned when an email address is
 	// not provided when creating a user
 	ErrEmailRequired = errors.New("models: email address is required")
@@ -116,7 +121,7 @@ type userService struct {
 // If the email address provided is invalid, this will return
 //   nil, ErrNotFound
 // If the password provided is invalid, this will return
-//   nil, ErrInvalidPassword
+//   nil, ErrPasswordIncorrect
 // If the email and password are both valid, this will return
 //   user, nil
 // Otherwise if another error is encountered this will return
@@ -298,6 +303,7 @@ func (uv *userValidator) ByRemember(token string) (*User, error) {
 // like the ID, CreatedAt, and UpdatedAt fields.
 func (uv *userValidator) Create(user *User) error {
 	err := runUserValFns(user,
+		uv.passwordMinLength,
 		uv.bcryptPassword,
 		uv.setRememberIfUnset,
 		uv.hmacRemember,
@@ -314,6 +320,7 @@ func (uv *userValidator) Create(user *User) error {
 // Update will hash a remember token if it is provided.
 func (uv *userValidator) Update(user *User) error {
 	err := runUserValFns(user,
+		uv.passwordMinLength,
 		uv.bcryptPassword,
 		uv.hmacRemember,
 		uv.normalizeEmail,
@@ -439,6 +446,16 @@ func (uv *userValidator) emailIsAvail(user *User) error {
 	// are updating, or if we have a conflict.
 	if user.ID != existing.ID {
 		return ErrEmailTaken
+	}
+	return nil
+}
+
+func (uv *userValidator) passwordMinLength(user *User) error {
+	if user.Password == "" {
+		return nil
+	}
+	if len(user.Password) < 8 {
+		return ErrPasswordTooShort
 	}
 	return nil
 }
