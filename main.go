@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/LIYINGZHEN/gollery/controllers"
-	"github.com/LIYINGZHEN/gollery/middleware"
-	"github.com/LIYINGZHEN/gollery/models"
+	"lenslocked.com/controllers"
+	"lenslocked.com/middleware"
+	"lenslocked.com/models"
+
 	"github.com/gorilla/mux"
 )
 
@@ -71,6 +72,10 @@ func main() {
 	r.HandleFunc("/galleries/{id:[0-9]+}/images",
 		requireUserMw.ApplyFn(galleriesC.ImageUpload)).
 		Methods("POST")
+
+	// Image routes
+	imageHandler := http.FileServer(http.Dir("./images/"))
+	r.PathPrefix("/images/").Handler(http.StripPrefix("/images/", imageHandler))
 
 	fmt.Println("Starting the server on :3000...")
 	http.ListenAndServe(":3000", userMw.Apply(r))
