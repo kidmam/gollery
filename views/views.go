@@ -57,6 +57,10 @@ func (v *View) Render(w http.ResponseWriter, r *http.Request, data interface{}) 
 			Yield: data,
 		}
 	}
+	if alert := getAlert(r); alert != nil {
+		vd.Alert = alert
+		clearAlert(w)
+	}
 	vd.User = context.User(r.Context())
 	var buf bytes.Buffer
 	csrfField := csrf.TemplateField(r)
@@ -68,7 +72,7 @@ func (v *View) Render(w http.ResponseWriter, r *http.Request, data interface{}) 
 	err := tpl.ExecuteTemplate(&buf, v.Layout, vd)
 	if err != nil {
 		http.Error(w, "Something went wrong. If the problem "+
-			"persists, please email support@gollery.com",
+			"persists, please email support@lenslocked.com",
 			http.StatusInternalServerError)
 		return
 	}
