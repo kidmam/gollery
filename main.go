@@ -43,6 +43,7 @@ func main() {
 	r.HandleFunc("/login", usersC.Login).Methods("POST")
 	r.HandleFunc("/cookietest", usersC.CookieTest).Methods("GET")
 	// Gallery routes
+	r.Handle("/galleries", requireUserMw.ApplyFn(galleriesC.Index)).Methods("GET")
 	r.Handle("/galleries/new", requireUserMw.Apply(galleriesC.New)).Methods("GET")
 	r.Handle("/galleries", requireUserMw.ApplyFn(galleriesC.Create)).Methods("POST")
 	r.HandleFunc("/galleries/{id:[0-9]+}", galleriesC.Show).Methods("GET").Name(controllers.ShowGallery)
