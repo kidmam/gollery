@@ -2,6 +2,22 @@
 
 
 [[projects]]
+  digest = "1:c79fb010be38a59d657c48c6ba1d003a8aa651fa56b579d959d74573b7dff8e1"
+  name = "github.com/gorilla/context"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "08b5f424b9271eedf6f9f0ce86cb9396ed337a42"
+  version = "v1.1.1"
+
+[[projects]]
+  digest = "1:c6c7d7d1c2a4f9845f37c6f17f83fe1adcb41bebc891b94cd1ef95be1ce6b5e7"
+  name = "github.com/gorilla/csrf"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "05b4a732b984ec326cac085631060968d4706b17"
+  version = "v1.5.1"
+
+[[projects]]
   digest = "1:ca59b1175189b3f0e9f1793d2c350114be36eaabbe5b9f554b35edee1de50aea"
   name = "github.com/gorilla/mux"
   packages = ["."]
@@ -16,6 +32,14 @@
   pruneopts = "UT"
   revision = "d0e4c24cff97ae983e9847e0ed5a02dc10013d41"
   version = "v1.0.2"
+
+[[projects]]
+  digest = "1:e72d1ebb8d395cf9f346fd9cbc652e5ae222dd85e0ac842dc57f175abed6d195"
+  name = "github.com/gorilla/securecookie"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "e59506cc896acb7f7bf732d4fdf5e25f7ccd8983"
+  version = "v1.1.1"
 
 [[projects]]
   digest = "1:7e63b12cdd7bef2c411d736cb67e28134d39f5d236aa1bfb8f3d55e3ad709eca"
@@ -49,6 +73,14 @@
   version = "v1.0.0"
 
 [[projects]]
+  digest = "1:cf31692c14422fa27c83a05292eb5cbe0fb2775972e8f1f8446a71549bd8980b"
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "ba968bfe8b2f7e042a574c888954fccecfa385b4"
+  version = "v0.8.1"
+
+[[projects]]
   branch = "master"
   digest = "1:9d5b5d543996dd584da1db1e0de1926f3e4c3a8dba0fa2f8db70f3ebee2342e0"
   name = "golang.org/x/crypto"
@@ -63,6 +95,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/gorilla/csrf",
     "github.com/gorilla/mux",
     "github.com/gorilla/schema",
     "github.com/jinzhu/gorm",
