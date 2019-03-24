@@ -19,6 +19,7 @@ func main() {
 		"in production. This ensures that a .config file is "+
 		"provided before the application starts.")
 	flag.Parse()
+	fmt.Println(*boolPtr)
 	cfg := LoadConfig(*boolPtr)
 	dbCfg := cfg.Database
 	services, err := models.NewServices(
@@ -36,7 +37,7 @@ func main() {
 
 	mgCfg := cfg.Mailgun
 	emailer := email.NewClient(
-		email.WithSender("Lenslocked.com Support", "support@"+mgCfg.Domain),
+		email.WithSender("Gollery.com Support", "support@"+mgCfg.Domain),
 		email.WithMailgun(mgCfg.Domain, mgCfg.APIKey, mgCfg.PublicAPIKey),
 	)
 

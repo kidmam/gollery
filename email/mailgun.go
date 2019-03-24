@@ -8,27 +8,27 @@ import (
 )
 
 const (
-	welcomeSubject = "Welcome to LensLocked.com!"
+	welcomeSubject = "Welcome to Gollery.com!"
 	resetSubject   = "Instructions for resetting your password."
-	resetBaseURL   = "https://www.lenslocked.com/reset"
+	resetBaseURL   = "https://www.gollery.com/reset"
 )
 
 const welcomeText = `Hi there!
 
-Welcome to LensLocked.com! We really hope you enjoy using
+Welcome to Gollery.com! We really hope you enjoy using
 our application!
 
 Best,
-Jon
+Max
 `
 
 const welcomeHTML = `Hi there!<br/>
 <br/>
 Welcome to
-<a href="https://www.lenslocked.com">LensLocked.com</a>! We really hope you enjoy using our application!<br/>
+<a href="https://www.gollery.com">Gollery.com</a>! We really hope you enjoy using our application!<br/>
 <br/>
 Best,<br/>
-Jon
+Max
 `
 
 const resetTextTmpl = `Hi there!
@@ -44,7 +44,7 @@ If you are asked for a token, please use the following value:
 If you didn't request a password reset you can safely ignore this email and your account will not be changed.
 
 Best,
-LensLocked Support
+Gollery Support
 `
 
 const resetHTMLTmpl = `Hi there!<br/>
@@ -60,7 +60,7 @@ If you are asked for a token, please use the following value:<br/>
 If you didn't request a password reset you can safely ignore this email and your account will not be changed.<br/>
 <br/>
 Best,<br/>
-LensLocked Support<br/>
+Gollery Support<br/>
 `
 
 func WithMailgun(domain, apiKey, publicKey string) ClientConfig {
@@ -81,7 +81,7 @@ type ClientConfig func(*Client)
 func NewClient(opts ...ClientConfig) *Client {
 	client := Client{
 		// Set a default from email address...
-		from: "support@lenslocked.com",
+		from: "support@gollery.com",
 	}
 	for _, opt := range opts {
 		opt(&client)
