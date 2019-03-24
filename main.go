@@ -49,7 +49,11 @@ func main() {
 	r.HandleFunc("/signup", usersC.Create).Methods("POST")
 	r.Handle("/login", usersC.LoginView).Methods("GET")
 	r.HandleFunc("/login", usersC.Login).Methods("POST")
+	r.Handle("/logout",
+		requireUserMw.ApplyFn(usersC.Logout)).
+		Methods("POST")
 	r.HandleFunc("/cookietest", usersC.CookieTest).Methods("GET")
+
 	// Gallery routes
 	r.Handle("/galleries",
 		requireUserMw.ApplyFn(galleriesC.Index)).
