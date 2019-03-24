@@ -3,10 +3,12 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/LIYINGZHEN/gollery/context"
 	"github.com/LIYINGZHEN/gollery/models"
 	"github.com/LIYINGZHEN/gollery/views"
+	"github.com/gorilla/mux"
 )
 
 func NewGalleries(gs models.GalleryService) *Galleries {
@@ -25,6 +27,25 @@ type Galleries struct {
 
 type GalleryForm struct {
 	Title string `schema:"title"`
+}
+
+// GET /galleries/:id
+func (g *Galleries) Show(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid gallery ID", http.StatusNotFound)
+		return
+	}
+	_ = id
+
+	gallery := models.Gallery{
+		Title: "A temporary fake gallery with ID: " + idStr,
+	}
+	var vd views.Data
+	vd.Yield = gallery
+	g.ShowView.Render(w, vd)
 }
 
 // POST /galleries
