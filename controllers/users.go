@@ -6,16 +6,18 @@ import (
 	"time"
 
 	"github.com/LIYINGZHEN/gollery/context"
+	"github.com/LIYINGZHEN/gollery/email"
 	"github.com/LIYINGZHEN/gollery/models"
 	"github.com/LIYINGZHEN/gollery/rand"
 	"github.com/LIYINGZHEN/gollery/views"
 )
 
-func NewUsers(us models.UserService) *Users {
+func NewUsers(us models.UserService, emailer *email.Client) *Users {
 	return &Users{
 		NewView:   views.NewView("bootstrap", "users/new"),
 		LoginView: views.NewView("bootstrap", "users/login"),
 		us:        us,
+		emailer:   emailer,
 	}
 }
 
@@ -23,6 +25,7 @@ type Users struct {
 	NewView   *views.View
 	LoginView *views.View
 	us        models.UserService
+	emailer   *email.Client
 }
 
 // New is used to render the form where a user can
@@ -62,7 +65,7 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 		u.NewView.Render(w, r, vd)
 		return
 	}
-
+	u.emailer.Welcome(user.Name, user.Email)
 	err := u.signIn(w, &user)
 	if err != nil {
 		http.Redirect(w, r, "/login", http.StatusFound)

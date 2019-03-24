@@ -91,6 +91,14 @@
   pruneopts = "UT"
   revision = "b7391e95e576cacdcdd422573063bc057239113d"
 
+[[projects]]
+  digest = "1:6ad77325212e02cc2c76bc974fcfb59a227018afddbd3bc78ea3cc53dadb2554"
+  name = "gopkg.in/mailgun/mailgun-go.v1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "28c45085c063854b83107df6cf37ad8f88462105"
+  version = "v1.1.1"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
@@ -101,6 +109,7 @@
     "github.com/jinzhu/gorm",
     "github.com/jinzhu/gorm/dialects/postgres",
     "golang.org/x/crypto/bcrypt",
+    "gopkg.in/mailgun/mailgun-go.v1",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
