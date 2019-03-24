@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"lenslocked.com/controllers"
-	"lenslocked.com/middleware"
-	"lenslocked.com/models"
-
+	"github.com/LIYINGZHEN/gollery/controllers"
+	"github.com/LIYINGZHEN/gollery/middleware"
+	"github.com/LIYINGZHEN/gollery/models"
 	"github.com/gorilla/mux"
 )
 
