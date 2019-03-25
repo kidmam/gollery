@@ -9,7 +9,8 @@ import (
 	"net/url"
 	"path/filepath"
 
-	"github.com/LIYINGZHEN/gollery/context"
+	"gollery/context"
+
 	"github.com/gorilla/csrf"
 )
 

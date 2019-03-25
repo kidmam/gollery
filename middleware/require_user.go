@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/LIYINGZHEN/gollery/context"
-	"github.com/LIYINGZHEN/gollery/models"
+	"gollery/context"
+	"gollery/models"
 )
 
 // User middleware will lookup the current user via their

@@ -6,9 +6,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/LIYINGZHEN/gollery/context"
-	"github.com/LIYINGZHEN/gollery/models"
-	"github.com/LIYINGZHEN/gollery/views"
+	"gollery/context"
+	"gollery/models"
+	"gollery/views"
+
 	"github.com/gorilla/mux"
 )
 

@@ -1,6 +1,6 @@
 package controllers
 
-import "github.com/LIYINGZHEN/gollery/views"
+import "gollery/views"
 
 func NewStatic() *Static {
 	return &Static{

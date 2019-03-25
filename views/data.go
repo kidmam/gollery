@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/LIYINGZHEN/gollery/models"
+	"gollery/models"
 )
 
 const (

@@ -6,12 +6,13 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/LIYINGZHEN/gollery/config"
-	"github.com/LIYINGZHEN/gollery/controllers"
-	"github.com/LIYINGZHEN/gollery/email"
-	"github.com/LIYINGZHEN/gollery/middleware"
-	"github.com/LIYINGZHEN/gollery/models"
-	"github.com/LIYINGZHEN/gollery/rand"
+	"gollery/config"
+	"gollery/controllers"
+	"gollery/email"
+	"gollery/middleware"
+	"gollery/models"
+	"gollery/rand"
+
 	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 )

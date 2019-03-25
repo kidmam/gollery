@@ -5,8 +5,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/LIYINGZHEN/gollery/hash"
-	"github.com/LIYINGZHEN/gollery/rand"
+	"gollery/hash"
+	"gollery/rand"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"golang.org/x/crypto/bcrypt"

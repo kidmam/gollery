@@ -5,11 +5,12 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/LIYINGZHEN/gollery/context"
-	"github.com/LIYINGZHEN/gollery/email"
-	"github.com/LIYINGZHEN/gollery/models"
-	"github.com/LIYINGZHEN/gollery/rand"
-	"github.com/LIYINGZHEN/gollery/views"
+	"gollery/context"
+
+	"gollery/email"
+	"gollery/models"
+	"gollery/rand"
+	"gollery/views"
 )
 
 func NewUsers(us models.UserService, emailer *email.Client) *Users {

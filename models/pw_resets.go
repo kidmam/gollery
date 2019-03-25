@@ -1,8 +1,9 @@
 package models
 
 import (
-	"github.com/LIYINGZHEN/gollery/hash"
-	"github.com/LIYINGZHEN/gollery/rand"
+	"gollery/hash"
+	"gollery/rand"
+
 	"github.com/jinzhu/gorm"
 )
 
