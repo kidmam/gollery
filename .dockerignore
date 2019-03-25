@@ -1,2 +1,7 @@
-/vendor
+vendor/
+
+# build file
 gollery
+
+# Uploaded images
+images/**

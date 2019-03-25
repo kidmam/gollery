@@ -38,6 +38,16 @@ func DefaultPostgresConfig() PostgresConfig {
 	}
 }
 
+func DevDockerPostgresConfig() PostgresConfig {
+	return PostgresConfig{
+		Host:     "db",
+		Port:     5432,
+		User:     "postgres",
+		Password: "",
+		Name:     "gollery",
+	}
+}
+
 type Config struct {
 	Port     int            `json:"port"`
 	Env      string         `json:"env"`
@@ -52,12 +62,21 @@ func (c Config) IsProd() bool {
 }
 
 func DefaultConfig() Config {
+	var database PostgresConfig
+
+	env := os.Getenv("GO_ENV")
+	if env == "dev_docker" {
+		database = DevDockerPostgresConfig()
+	} else {
+		database = DefaultPostgresConfig()
+	}
+
 	return Config{
 		Port:     3000,
 		Env:      "dev",
 		Pepper:   "secret-random-string",
 		HMACKey:  "secret-hmac-key",
-		Database: DefaultPostgresConfig(),
+		Database: database,
 	}
 }
 

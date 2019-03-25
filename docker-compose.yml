@@ -1,6 +1,7 @@
 version: '3'
+
 services:
-  postgres:
+  db:
     container_name: postgres
     image: postgres
     ports:
@@ -8,12 +9,15 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=gollery
+
   webapp:
     container_name: app
     restart: always
     depends_on:
-      - postgres
+      - db
     build:
       context: .
     ports:
-      - 8080:8080
+      - 3000:3000
+    environment:
+      - GO_ENV=dev_docker
