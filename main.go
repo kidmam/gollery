@@ -4,7 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
+	"time"
 
+	"github.com/LIYINGZHEN/gollery/config"
 	"github.com/LIYINGZHEN/gollery/controllers"
 	"github.com/LIYINGZHEN/gollery/email"
 	"github.com/LIYINGZHEN/gollery/middleware"
@@ -15,12 +17,13 @@ import (
 )
 
 func main() {
+	time.Sleep(5 * time.Second)
+
 	boolPtr := flag.Bool("prod", false, "Provide this flag "+
 		"in production. This ensures that a .config file is "+
 		"provided before the application starts.")
 	flag.Parse()
-	fmt.Println(*boolPtr)
-	cfg := LoadConfig(*boolPtr)
+	cfg := config.LoadConfig(*boolPtr)
 	dbCfg := cfg.Database
 	services, err := models.NewServices(
 		models.WithGorm(dbCfg.Dialect(), dbCfg.ConnectionInfo()),

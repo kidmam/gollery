@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"encoding/json"
@@ -67,6 +67,7 @@ type MailgunConfig struct {
 	Domain       string `json:"domain"`
 }
 
+// LoadConfig
 func LoadConfig(configReq bool) Config {
 	f, err := os.Open(".config")
 	if err != nil {

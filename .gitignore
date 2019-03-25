@@ -1,5 +1,8 @@
 /vendor
 
+# build file
+gollery
+
 # mac hidden files
 .DS_Store
 

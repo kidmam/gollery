@@ -16,7 +16,7 @@ import (
 var (
 	LayoutDir   string = "views/layouts/"
 	TemplateDir string = "views/"
-	TemplateExt string = ".gohtml"
+	TemplateExt string = ".html"
 )
 
 func NewView(layout string, files ...string) *View {
