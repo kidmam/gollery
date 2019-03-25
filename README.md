@@ -24,13 +24,6 @@
 </div>
 <br>
 
-## Demo
-
-![1](https://user-images.githubusercontent.com/11765228/54899236-733bb380-4ecf-11e9-8ffc-072cb072bdd2.png)
-![2](https://user-images.githubusercontent.com/11765228/54899238-73d44a00-4ecf-11e9-8e52-571c37ca2482.png)
-![3](https://user-images.githubusercontent.com/11765228/54899240-73d44a00-4ecf-11e9-9892-2622a61ee2aa.png)
-![4](https://user-images.githubusercontent.com/11765228/54899242-73d44a00-4ecf-11e9-86d2-3bc1b65deaf9.png)
-
 ## How to start
 
 ```
@@ -41,3 +34,9 @@ make dev
 ```
 
 visit http://localhost:3000
+
+## Demo
+
+![1](https://user-images.githubusercontent.com/11765228/54899236-733bb380-4ecf-11e9-8ffc-072cb072bdd2.png)
+![3](https://user-images.githubusercontent.com/11765228/54899240-73d44a00-4ecf-11e9-9892-2622a61ee2aa.png)
+![4](https://user-images.githubusercontent.com/11765228/54899242-73d44a00-4ecf-11e9-86d2-3bc1b65deaf9.png)
