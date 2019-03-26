@@ -1,0 +1,34 @@
+debug = true
+
+logLevel = "INFO"
+# Define the EntryPoint for HTTP and HTTPS
+defaultEntryPoints = ["https","http"]
+
+# Force HTTPS
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+
+#Enable retry sending a request if the network error
+[retry]
+
+#Define Docker Backend Configuration
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+domain = "gollery.cc"
+watch = true
+exposedbydefault = false
+
+# Let's encrypt configuration
+[acme]
+email = "maxlivinci@gmail.com"
+storage = "acme.json"
+entryPoint = "https"
+onHostRule = true
+  [acme.httpChallenge]
+  entryPoint = "http"
