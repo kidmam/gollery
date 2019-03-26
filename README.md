@@ -56,4 +56,5 @@ $ chmod 600 /opt/traefik/acme.json
 ## Roadmap
 
 - [x] Make https work. (Traefik)
+- [ ] Persist data. (Docker Volume)
 - [ ] Make CI/CD work. (Drone)
