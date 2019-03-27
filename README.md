@@ -7,6 +7,8 @@
 
 
 [![GitHub issues](https://img.shields.io/github/issues/LIYINGZHEN/gollery.svg)](https://github.com/LIYINGZHEN/gollery/issues)
+[![Build Status](https://cloud.drone.io/api/badges/LIYINGZHEN/gollery/status.svg)](https://cloud.drone.io/LIYINGZHEN/gollery)
+[![Go Report Card](https://goreportcard.com/badge/github.com/LIYINGZHEN/gollery)](https://goreportcard.com/report/github.com/LIYINGZHEN/gollery)
 [![GitHub license](https://img.shields.io/github/license/LIYINGZHEN/gollery.svg)](https://github.com/LIYINGZHEN/gollery)
 
 
@@ -70,4 +72,4 @@ $ docker-compose up -d
 
 - [x] Make https work. (Traefik)
 - [x] Persist data. (Docker Volume)
-- [ ] Make CI/CD work. (Drone)
+- [x] Make CI/CD work. (Drone)

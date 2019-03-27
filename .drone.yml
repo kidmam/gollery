@@ -1,0 +1,60 @@
+kind: pipeline
+name: default
+
+workspace:
+  base: /go
+  path: src/gollery
+
+steps:
+  - name: test
+    image: golang:1.12
+    commands:
+      - export INSTALL_DIRECTORY=/usr/bin
+      - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+      - dep ensure -v
+      - go test -v ./...
+
+  # # http://plugins.drone.io/drone-plugins/drone-docker
+  # - name: publish
+  #   image: plugins/docker
+  #   settings:
+  #     repo: maxlivinci/gollery
+  #     username:
+  #       from_secret: docker_username
+  #     password:
+  #       from_secret: docker_password
+  #     auto_tag: true
+  #   when:
+  #     branch: master
+
+  - name: scp
+    image: appleboy/drone-scp
+    settings:
+      host: 134.209.131.45
+      user: root
+      key:
+        from_secret: key
+      target: /go/src/gollery
+      source:
+        - views
+        - assets
+        - docker-compose.yml
+        - traefik.toml
+    when:
+      branch: master
+
+  - name: ssh
+    image: appleboy/drone-ssh
+    settings:
+      host: 134.209.131.45
+      user: root
+      key:
+        from_secret: key
+      script:
+        - cd /go/src/gollery
+        - touch acme.json
+        - chmod 600 acme.json
+        - docker-compose up -d --build --force-recreate
+        - docker images --quiet --filter=dangling=true | xargs --no-run-if-empty docker rmi -f
+    when:
+      branch: master
