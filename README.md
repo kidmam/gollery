@@ -44,7 +44,7 @@ Under Construction
 
 ```
 $ touch acme.json
-$ chmod 600 /opt/traefik/acme.json
+$ chmod 600 acme.json
 ```
 
 ## Screenshots
@@ -56,5 +56,5 @@ $ chmod 600 /opt/traefik/acme.json
 ## Roadmap
 
 - [x] Make https work. (Traefik)
-- [ ] Persist data. (Docker Volume)
+- [x] Persist data. (Docker Volume)
 - [ ] Make CI/CD work. (Drone)

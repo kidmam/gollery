@@ -1,9 +1,16 @@
 vendor/
 
-# build file
+# Build file
 gollery
+
+# Mac hidden files
+.DS_Store
 
 # Uploaded images
 images/**
 
+# Let's Encrypt
 acme.json
+
+# Docker volumes
+volumes/
