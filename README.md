@@ -71,5 +71,6 @@ $ docker-compose up -d
 ## Roadmap
 
 - [x] Make https work. (Traefik)
-- [x] Persist data. (Docker Volume)
 - [x] Make CI/CD work. (Drone)
+- [ ] OpenTracing With Jaeger
+- [ ] Persist data. (Docker Volume)

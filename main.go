@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"net/http"
@@ -9,35 +10,46 @@ import (
 	"gollery/config"
 	"gollery/controllers"
 	"gollery/email"
+	"gollery/lib/tracing"
 	"gollery/middleware"
 	"gollery/models"
 	"gollery/rand"
 
 	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
+	"github.com/opentracing/opentracing-go"
 )
 
 func main() {
 	time.Sleep(5 * time.Second)
 
-	boolPtr := flag.Bool("prod", false, "Provide this flag "+
-		"in production. This ensures that a .config file is "+
-		"provided before the application starts.")
+	tracer, closer := tracing.Init("Initialize Database")
+	defer closer.Close()
+	opentracing.SetGlobalTracer(tracer)
+
+	boolPtr := flag.Bool("prod", false, "Provide this flag in production. This ensures that a .config file is provided before the application starts.")
 	flag.Parse()
-	cfg := config.LoadConfig(*boolPtr)
+
+	span := tracer.StartSpan("reading config")
+	span.SetTag("production", *boolPtr)
+	ctx := opentracing.ContextWithSpan(context.Background(), span)
+
+	cfg := config.LoadConfig(ctx, *boolPtr)
 	dbCfg := cfg.Database
+
 	services, err := models.NewServices(
-		models.WithGorm(dbCfg.Dialect(), dbCfg.ConnectionInfo()),
-		models.WithLogMode(!cfg.IsProd()),
-		models.WithUser(cfg.Pepper, cfg.HMACKey),
-		models.WithGallery(),
-		models.WithImage(),
+		models.WithGorm(ctx, dbCfg.Dialect(), dbCfg.ConnectionInfo()),
+		models.WithLogMode(ctx, !cfg.IsProd()),
+		models.WithUser(ctx, cfg.Pepper, cfg.HMACKey),
+		models.WithGallery(ctx),
+		models.WithImage(ctx),
 	)
 	if err != nil {
 		panic(err)
 	}
 	defer services.Close()
 	services.AutoMigrate()
+	span.Finish()
 
 	mgCfg := cfg.Mailgun
 	emailer := email.NewClient(

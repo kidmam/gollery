@@ -1,9 +1,12 @@
 package config
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
+
+	"github.com/opentracing/opentracing-go"
 )
 
 type PostgresConfig struct {
@@ -87,7 +90,10 @@ type MailgunConfig struct {
 }
 
 // LoadConfig
-func LoadConfig(configReq bool) Config {
+func LoadConfig(ctx context.Context, configReq bool) Config {
+	span, _ := opentracing.StartSpanFromContext(ctx, "LoadConfig")
+	defer span.Finish()
+
 	f, err := os.Open(".config")
 	if err != nil {
 		if configReq {
