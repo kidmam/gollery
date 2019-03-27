@@ -30,22 +30,35 @@
 **Local Development**
 
 ```
-cd $GOPATH/src
-git clone https://github.com/LIYINGZHEN/gollery
-cd gollery
-docker-compose -f docker-compose-dev.yml up
+$ git clone https://github.com/LIYINGZHEN/gollery
+$ cd gollery
+$ docker-compose -f docker-compose-dev.yml up
 ```
 
 visit http://localhost:3000
 
 **Production**
 
-Under Construction
+1. Create the acme.json file.
 
 ```
+$ cd gollery
 $ touch acme.json
 $ chmod 600 acme.json
 ```
+
+2. Open `traefik.toml` file, replace `domain` and `email` with yours.
+
+3. Open `docker-compose.yml` and replace `gollery.cc` with your domain.
+
+4. Run the app.
+
+```
+$ docker-compose up -d
+```
+
+5. visit https://your-domain.com
+
 
 ## Screenshots
 
