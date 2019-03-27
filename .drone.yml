@@ -14,18 +14,18 @@ steps:
       - dep ensure -v
       - go test -v ./...
 
-  # # http://plugins.drone.io/drone-plugins/drone-docker
-  # - name: publish
-  #   image: plugins/docker
-  #   settings:
-  #     repo: maxlivinci/gollery
-  #     username:
-  #       from_secret: docker_username
-  #     password:
-  #       from_secret: docker_password
-  #     auto_tag: true
-  #   when:
-  #     branch: master
+  # http://plugins.drone.io/drone-plugins/drone-docker
+  - name: publish
+    image: plugins/docker
+    settings:
+      repo: maxlivinci/gollery
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      auto_tag: true
+    when:
+      branch: master
 
   - name: scp
     image: appleboy/drone-scp
