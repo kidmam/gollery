@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -54,12 +56,10 @@ type SignupForm struct {
 //
 // POST /signup
 func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
-	var vd views.Data
 	var form SignupForm
-	vd.Yield = &form
-	if err := parseForm(r, &form); err != nil {
-		vd.SetAlert(err)
-		u.NewView.Render(w, r, vd)
+	if err := json.NewDecoder(r.Body).Decode(&form); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -69,18 +69,21 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 		Password: form.Password,
 	}
 	if err := u.us.Create(&user); err != nil {
-		vd.SetAlert(err)
-		u.NewView.Render(w, r, vd)
-		return
-	}
-	u.emailer.Welcome(user.Name, user.Email)
-	err := u.signIn(w, &user)
-	if err != nil {
-		http.Redirect(w, r, "/login", http.StatusFound)
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	http.Redirect(w, r, "/galleries", http.StatusFound)
+	u.emailer.Welcome(user.Name, user.Email)
+
+	err := u.signIn(w, &user)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 type LoginForm struct {
@@ -93,32 +96,28 @@ type LoginForm struct {
 //
 // POST /login
 func (u *Users) Login(w http.ResponseWriter, r *http.Request) {
-	var vd views.Data
 	var form LoginForm
-	if err := parseForm(r, &form); err != nil {
-		vd.SetAlert(err)
-		u.LoginView.Render(w, r, vd)
+	if err := json.NewDecoder(r.Body).Decode(&form); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
 	user, err := u.us.Authenticate(form.Email, form.Password)
 	if err != nil {
-		switch err {
-		case models.ErrNotFound:
-			vd.AlertError("No user exists with that email address")
-		default:
-			vd.SetAlert(err)
-		}
-		u.LoginView.Render(w, r, vd)
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	err = u.signIn(w, user)
 	if err != nil {
-		vd.SetAlert(err)
-		u.LoginView.Render(w, r, vd)
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/galleries", http.StatusFound)
+
+	w.WriteHeader(http.StatusOK)
 }
 
 // Logout is used to delete a user's session cookie
@@ -130,6 +129,7 @@ func (u *Users) Logout(w http.ResponseWriter, r *http.Request) {
 	// First expire the user's cookie
 	cookie := http.Cookie{
 		Name:     "remember_token",
+		Path:     "/",
 		Value:    "",
 		Expires:  time.Now(),
 		HttpOnly: true,
@@ -144,7 +144,19 @@ func (u *Users) Logout(w http.ResponseWriter, r *http.Request) {
 	user.Remember = token
 	u.us.Update(user)
 	// Finally send the user to the home page
-	http.Redirect(w, r, "/", http.StatusFound)
+	w.WriteHeader(http.StatusOK)
+}
+
+func (u *Users) IsLogin(w http.ResponseWriter, r *http.Request) {
+	user := context.User(r.Context())
+	w.Header().Set("Content-Type", "application/json")
+	if user == nil {
+		js, _ := json.Marshal(false)
+		w.Write(js)
+		return
+	}
+	js, _ := json.Marshal(true)
+	w.Write(js)
 }
 
 // ResetPwForm is used to process the forgot password form
@@ -258,6 +270,7 @@ func (u *Users) signIn(w http.ResponseWriter, user *models.User) error {
 	}
 	cookie := http.Cookie{
 		Name:     "remember_token",
+		Path:     "/",
 		Value:    user.Remember,
 		HttpOnly: true,
 	}

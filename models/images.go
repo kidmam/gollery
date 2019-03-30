@@ -14,11 +14,12 @@ import (
 type Image struct {
 	GalleryID uint
 	Filename  string
+	Path      string
 }
 
 // Path is used to build the absolute path used to reference this image
 // via a web request.
-func (i *Image) Path() string {
+func (i *Image) GenPath() string {
 	temp := url.URL{
 		Path: "/" + i.RelativePath(),
 	}
@@ -73,10 +74,12 @@ func (is *imageService) ByGalleryID(galleryID uint) ([]Image, error) {
 	// Setup the Image slice we are returning
 	ret := make([]Image, len(strings))
 	for i, imgStr := range strings {
-		ret[i] = Image{
+		img := Image{
 			Filename:  filepath.Base(imgStr),
 			GalleryID: galleryID,
 		}
+		img.Path = img.GenPath()
+		ret[i] = img
 	}
 	return ret, nil
 }

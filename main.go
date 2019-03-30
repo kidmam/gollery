@@ -11,10 +11,9 @@ import (
 	"gollery/email"
 	"gollery/middleware"
 	"gollery/models"
-	"gollery/rand"
 
-	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -46,7 +45,6 @@ func main() {
 	)
 
 	r := mux.NewRouter()
-	staticC := controllers.NewStatic()
 	usersC := controllers.NewUsers(services.User, emailer)
 	galleriesC := controllers.NewGalleries(services.Gallery, services.Image, r)
 
@@ -55,15 +53,6 @@ func main() {
 	}
 	requireUserMw := middleware.RequireUser{}
 
-	r.Handle("/", staticC.Home).Methods("GET")
-	r.Handle("/contact", staticC.Contact).Methods("GET")
-	r.HandleFunc("/signup", usersC.New).Methods("GET")
-	r.HandleFunc("/signup", usersC.Create).Methods("POST")
-	r.Handle("/login", usersC.LoginView).Methods("GET")
-	r.HandleFunc("/login", usersC.Login).Methods("POST")
-	r.Handle("/logout",
-		requireUserMw.ApplyFn(usersC.Logout)).
-		Methods("POST")
 	r.Handle("/forgot", usersC.ForgotPwView).Methods("GET")
 	r.HandleFunc("/forgot", usersC.InitiateReset).Methods("POST")
 	r.HandleFunc("/reset", usersC.ResetPw).Methods("GET")
@@ -71,36 +60,23 @@ func main() {
 	r.HandleFunc("/cookietest", usersC.CookieTest).Methods("GET")
 
 	// Gallery routes
-	r.Handle("/galleries",
-		requireUserMw.ApplyFn(galleriesC.Index)).
-		Methods("GET").
-		Name(controllers.IndexGalleries)
 	r.Handle("/galleries/new",
 		requireUserMw.Apply(galleriesC.New)).
 		Methods("GET")
-	r.Handle("/galleries",
-		requireUserMw.ApplyFn(galleriesC.Create)).
-		Methods("POST")
-	r.HandleFunc("/galleries/{id:[0-9]+}",
-		galleriesC.Show).
-		Methods("GET").
-		Name(controllers.ShowGallery)
-	r.HandleFunc("/galleries/{id:[0-9]+}/edit",
-		requireUserMw.ApplyFn(galleriesC.Edit)).
-		Methods("GET").
-		Name(controllers.EditGallery)
-	r.HandleFunc("/galleries/{id:[0-9]+}/update",
-		requireUserMw.ApplyFn(galleriesC.Update)).
-		Methods("POST")
-	r.HandleFunc("/galleries/{id:[0-9]+}/delete",
-		requireUserMw.ApplyFn(galleriesC.Delete)).
-		Methods("POST")
-	r.HandleFunc("/galleries/{id:[0-9]+}/images",
-		requireUserMw.ApplyFn(galleriesC.ImageUpload)).
-		Methods("POST")
-	r.HandleFunc("/galleries/{id:[0-9]+}/images/{filename}/delete",
-		requireUserMw.ApplyFn(galleriesC.ImageDelete)).
-		Methods("POST")
+
+	// APIs
+	r.HandleFunc("/api/v1/isLogin", usersC.IsLogin).Methods("GET")
+	r.HandleFunc("/api/v1/signup", usersC.Create).Methods("POST")
+	r.HandleFunc("/api/v1/login", usersC.Login).Methods("POST")
+	r.HandleFunc("/api/v1/logout", requireUserMw.ApplyFn(usersC.Logout)).Methods("POST")
+	r.HandleFunc("/api/v1/galleries", requireUserMw.ApplyFn(galleriesC.Index)).Methods("GET")
+	r.HandleFunc("/api/v1/galleries", requireUserMw.ApplyFn(galleriesC.Create)).Methods("POST")
+	r.HandleFunc("/api/v1/galleries/{id:[0-9]+}", requireUserMw.ApplyFn(galleriesC.Show)).Methods("GET")
+	r.HandleFunc("/api/v1/galleries/{id:[0-9]+}/edit", requireUserMw.ApplyFn(galleriesC.Edit)).Methods("GET")
+	r.HandleFunc("/api/v1/galleries/{id:[0-9]+}/update", requireUserMw.ApplyFn(galleriesC.Update)).Methods("POST")
+	r.HandleFunc("/api/v1/galleries/{id:[0-9]+}/images", requireUserMw.ApplyFn(galleriesC.ImageUpload)).Methods("POST")
+	r.HandleFunc("/api/v1/galleries/{id:[0-9]+}/images/{filename}/delete", requireUserMw.ApplyFn(galleriesC.ImageDelete)).Methods("POST")
+	r.HandleFunc("/api/v1/galleries/{id:[0-9]+}/delete", requireUserMw.ApplyFn(galleriesC.Delete)).Methods("POST")
 
 	// Image routes
 	imageHandler := http.FileServer(http.Dir("./images/"))
@@ -111,16 +87,14 @@ func main() {
 	assetHandler = http.StripPrefix("/assets/", assetHandler)
 	r.PathPrefix("/assets/").Handler(assetHandler)
 
-	b, err := rand.Bytes(32)
-	if err != nil {
-		panic(err)
-	}
-	// Use the config's IsProd method instead
-	csrfMw := csrf.Protect(b, csrf.Secure(cfg.IsProd()))
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowCredentials: true,
+	})
+	handler := c.Handler(userMw.Apply(r))
 
 	// Our port is not provided via config, so we need to
 	// update the last bit of our main function.
 	fmt.Printf("Starting the server on :%d...\n", cfg.Port)
-	http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port),
-		csrfMw(userMw.Apply(r)))
+	http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), handler)
 }

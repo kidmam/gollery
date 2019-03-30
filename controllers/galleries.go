@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"fmt"
+	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
@@ -53,99 +53,121 @@ func (g *Galleries) Index(w http.ResponseWriter, r *http.Request) {
 	user := context.User(r.Context())
 	galleries, err := g.gs.ByUserID(user.ID)
 	if err != nil {
-		// We could attempt to display the index page with
-		// no galleries and an error message, but that isn't
-		// really more useful than a generic error message so
-		// I didn't change this.
-		// Regardless of what page we display, we should try
-		// to make sure the error is logged so we can debug it
-		// later.
 		log.Println(err)
-		http.Error(w, "Something went wrong.", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	var vd views.Data
-	vd.Yield = galleries
-	g.IndexView.Render(w, r, vd)
+
+	js, err := json.Marshal(galleries)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
 }
 
 // GET /galleries/:id
 func (g *Galleries) Show(w http.ResponseWriter, r *http.Request) {
 	gallery, err := g.galleryByID(w, r)
 	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	var vd views.Data
-	vd.Yield = gallery
-	g.ShowView.Render(w, r, vd)
+
+	js, err := json.Marshal(gallery)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
 }
 
 // GET /galleries/:id/edit
 func (g *Galleries) Edit(w http.ResponseWriter, r *http.Request) {
 	gallery, err := g.galleryByID(w, r)
 	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	user := context.User(r.Context())
 	if gallery.UserID != user.ID {
-		http.Error(w, "You do not have permission to edit this gallery", http.StatusForbidden)
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	var vd views.Data
-	vd.Yield = gallery
-	g.EditView.Render(w, r, vd)
+
+	js, err := json.Marshal(gallery)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
 }
 
 // POST /galleries/:id/update
 func (g *Galleries) Update(w http.ResponseWriter, r *http.Request) {
 	gallery, err := g.galleryByID(w, r)
 	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
 	user := context.User(r.Context())
 	if gallery.UserID != user.ID {
-		http.Error(w, "Gallery not found", http.StatusNotFound)
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	var vd views.Data
-	vd.Yield = gallery
+
 	var form GalleryForm
-	if err := parseForm(r, &form); err != nil {
-		vd.SetAlert(err)
-		g.EditView.Render(w, r, vd)
+	if err := json.NewDecoder(r.Body).Decode(&form); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
 	gallery.Title = form.Title
 	err = g.gs.Update(gallery)
 	if err != nil {
-		vd.SetAlert(err)
-	} else {
-		vd.Alert = &views.Alert{
-			Level:   views.AlertLvlSuccess,
-			Message: "Gallery successfully updated!",
-		}
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
-	g.EditView.Render(w, r, vd)
+
+	w.WriteHeader(http.StatusOK)
 }
 
 // POST /galleries/:id/images
 func (g *Galleries) ImageUpload(w http.ResponseWriter, r *http.Request) {
 	gallery, err := g.galleryByID(w, r)
 	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	user := context.User(r.Context())
 	if gallery.UserID != user.ID {
-		http.Error(w, "Gallery not found", http.StatusNotFound)
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	var vd views.Data
-	vd.Yield = gallery
 	err = r.ParseMultipartForm(maxMultipartMem)
 	if err != nil {
-		vd.SetAlert(err)
-		g.EditView.Render(w, r, vd)
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -155,8 +177,8 @@ func (g *Galleries) ImageUpload(w http.ResponseWriter, r *http.Request) {
 		// Open the uploaded file
 		file, err := f.Open()
 		if err != nil {
-			vd.SetAlert(err)
-			g.EditView.Render(w, r, vd)
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		defer file.Close()
@@ -164,18 +186,23 @@ func (g *Galleries) ImageUpload(w http.ResponseWriter, r *http.Request) {
 		// Create the image
 		err = g.is.Create(gallery.ID, file, f.Filename)
 		if err != nil {
-			vd.SetAlert(err)
-			g.EditView.Render(w, r, vd)
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 	}
 
-	url, err := g.r.Get(EditGallery).URL("id", fmt.Sprintf("%v", gallery.ID))
+	images, _ := g.is.ByGalleryID(gallery.ID)
+
+	js, err := json.Marshal(images)
 	if err != nil {
-		http.Redirect(w, r, "/galleries", http.StatusFound)
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, url.Path, http.StatusFound)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
 }
 
 // POST /galleries/:id/images/:filename/delete
@@ -186,8 +213,8 @@ func (g *Galleries) ImageDelete(w http.ResponseWriter, r *http.Request) {
 	}
 	user := context.User(r.Context())
 	if gallery.UserID != user.ID {
-		http.Error(w, "You do not have permission to edit "+
-			"this gallery or image", http.StatusForbidden)
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	filename := mux.Vars(r)["filename"]
@@ -197,81 +224,76 @@ func (g *Galleries) ImageDelete(w http.ResponseWriter, r *http.Request) {
 	}
 	err = g.is.Delete(&i)
 	if err != nil {
-		var vd views.Data
-		vd.Yield = gallery
-		vd.SetAlert(err)
-		g.EditView.Render(w, r, vd)
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	url, err := g.r.Get(EditGallery).URL("id", fmt.Sprintf("%v", gallery.ID))
+
+	images, _ := g.is.ByGalleryID(gallery.ID)
+
+	js, err := json.Marshal(images)
 	if err != nil {
 		log.Println(err)
-		http.Redirect(w, r, "/galleries", http.StatusFound)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, url.Path, http.StatusFound)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
 }
 
 // POST /galleries
 func (g *Galleries) Create(w http.ResponseWriter, r *http.Request) {
-	var vd views.Data
 	var form GalleryForm
-	if err := parseForm(r, &form); err != nil {
-		vd.SetAlert(err)
-		g.New.Render(w, r, vd)
+	if err := json.NewDecoder(r.Body).Decode(&form); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
 	user := context.User(r.Context())
 	gallery := models.Gallery{
 		Title:  form.Title,
 		UserID: user.ID,
 	}
 	if err := g.gs.Create(&gallery); err != nil {
-		vd.SetAlert(err)
-		g.New.Render(w, r, vd)
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	url, err := g.r.Get(EditGallery).URL("id",
-		strconv.Itoa(int(gallery.ID)))
+	js, err := json.Marshal(gallery.ID)
 	if err != nil {
-		// This error shouldn't ever happen unless our routes
-		// are messed up, but just in case I liked to fallback
-		// to redirecting a user to a hard-coded galleries
-		// index page and logging the error.
 		log.Println(err)
-		http.Redirect(w, r, "/galleries", http.StatusFound)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, url.Path, http.StatusFound)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
 }
 
 // POST /galleries/:id/delete
 func (g *Galleries) Delete(w http.ResponseWriter, r *http.Request) {
 	gallery, err := g.galleryByID(w, r)
 	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	user := context.User(r.Context())
 	if gallery.UserID != user.ID {
-		http.Error(w, "You do not have permission to edit "+
-			"this gallery", http.StatusForbidden)
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	var vd views.Data
 	err = g.gs.Delete(gallery.ID)
 	if err != nil {
-		vd.SetAlert(err)
-		vd.Yield = gallery
-		g.EditView.Render(w, r, vd)
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	url, err := g.r.Get(IndexGalleries).URL()
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusFound)
-		return
-	}
-	http.Redirect(w, r, url.Path, http.StatusFound)
+	w.WriteHeader(http.StatusOK)
 }
 
 // galleryByID will parse the "id" variable from the

@@ -1,16 +1,28 @@
-version: '3'
+version: "3"
 
 services:
+  frontend:
+    container_name: frontend
+    depends_on:
+      - db
+      - backend
+    restart: always
+    build:
+      context: ./client
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_ENV=developmentDocker
 
-  webapp:
-    container_name: app
+  backend:
+    container_name: backend
     depends_on:
       - db
     restart: always
     build:
       context: .
     ports:
-      - 3000:3000
+      - 8080:8080
     volumes:
       - ./volumes/images:/go/src/gollery/images
     environment:

@@ -72,7 +72,7 @@ func DefaultConfig() Config {
 	}
 
 	return Config{
-		Port:     3000,
+		Port:     8080,
 		Env:      "dev",
 		Pepper:   "secret-random-string",
 		HMACKey:  "secret-hmac-key",
