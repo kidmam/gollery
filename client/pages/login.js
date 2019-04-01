@@ -8,7 +8,7 @@ const Login = () => {
   const handleSubmit = async e => {
     e.preventDefault()
     try {
-      await fetch("http://localhost:8080/api/v1/login", {
+      await fetch(`${window.location.origin}/api/v1/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

@@ -10,7 +10,7 @@ const Edit = ({ id }) => {
     async function fetchData() {
       try {
         const res = await fetch(
-          `http://localhost:8080/api/v1/galleries/${id}/edit`,
+          `${window.location.origin}/api/v1/galleries/${id}/edit`,
           {
             method: "GET",
             credentials: "include"
@@ -33,7 +33,7 @@ const Edit = ({ id }) => {
 
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1/galleries/${id}/images`,
+        `${window.location.origin}/api/v1/galleries/${id}/images`,
         {
           method: "POST",
           credentials: "include",
@@ -49,7 +49,9 @@ const Edit = ({ id }) => {
 
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1/galleries/${id}/images/${encodeURIComponent(
+        `${
+          window.location.origin
+        }/api/v1/galleries/${id}/images/${encodeURIComponent(
           image.Filename
         )}/delete`,
         {
@@ -66,7 +68,7 @@ const Edit = ({ id }) => {
 
     try {
       const res = await fetch(
-        `http://localhost:8080/api/v1/galleries/${id}/delete`,
+        `${window.location.origin}/api/v1/galleries/${id}/delete`,
         {
           method: "POST",
           credentials: "include"
@@ -80,7 +82,7 @@ const Edit = ({ id }) => {
     e.preventDefault()
 
     try {
-      await fetch(`http://localhost:8080/api/v1/galleries/${id}/update`, {
+      await fetch(`${window.location.origin}/api/v1/galleries/${id}/update`, {
         method: "POST",
         credentials: "include",
         body: JSON.stringify({ title })
@@ -130,9 +132,9 @@ const Edit = ({ id }) => {
         <div className="col-md-10">
           {galleryImages.map(image => (
             <div className="col-md-2" key={`${image.Path}`}>
-              <a href={`http://localhost:8080/${image.Path}`}>
+              <a href={`${window.location.origin}/${image.Path}`}>
                 <img
-                  src={`http://localhost:8080/${image.Path}`}
+                  src={`${window.location.origin}/${image.Path}`}
                   className="thumbnail"
                 />
               </a>

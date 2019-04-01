@@ -7,7 +7,7 @@ const Galleries = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch("http://localhost:8080/api/v1/galleries", {
+        const res = await fetch(`${window.location.origin}/api/v1/galleries`, {
           method: "GET",
           credentials: "include"
         })

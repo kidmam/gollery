@@ -20,7 +20,7 @@ class MyApp extends App {
     let isLogin = false
     if (!process.browser) {
       try {
-        const res = await fetch("http://localhost:3000/api/v1/isLogin", {
+        const res = await fetch(`${window.location.origin}/api/v1/isLogin`, {
           method: "GET",
           headers: {
             cookie: ctx.req.headers.cookie

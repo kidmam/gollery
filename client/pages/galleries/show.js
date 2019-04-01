@@ -8,7 +8,7 @@ const Show = ({ id }) => {
     async function fetchData() {
       try {
         const res = await fetch(
-          `http://localhost:8080/api/v1/galleries/${id}`,
+          `${window.location.origin}/api/v1/galleries/${id}`,
           {
             method: "GET",
             credentials: "include"
@@ -31,9 +31,9 @@ const Show = ({ id }) => {
       <div className="row">
         {gallery.Images.map(img => (
           <div className="col-md-4">
-            <a href={`http://localhost:8080/${img.Path}`}>
+            <a href={`${window.location.origin}/${img.Path}`}>
               <img
-                src={`http://localhost:8080/${img.Path}`}
+                src={`${window.location.origin}/${img.Path}`}
                 className="thumbnail"
               />
             </a>

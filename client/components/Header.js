@@ -5,7 +5,7 @@ const Header = ({ isLogin }) => {
   const handleSubmit = async e => {
     e.preventDefault()
     try {
-      await fetch("http://localhost:8080/api/v1/logout", {
+      await fetch(`${window.location.origin}/api/v1/logout`, {
         method: "POST",
         credentials: "include"
       })
