@@ -15,10 +15,12 @@ steps:
       - go test -v ./...
 
   # http://plugins.drone.io/drone-plugins/drone-docker
-  - name: publish-backend
+  - name: publish-frontend
     image: plugins/docker
     settings:
-      repo: maxlivinci/gollery-backend
+      repo: maxlivinci/gollery-frontend
+      context: ./client
+      dockerfile: ./client/Dockerfile
       username:
         from_secret: docker_username
       password:
@@ -27,11 +29,10 @@ steps:
     when:
       branch: master
 
-  - name: publish-frontend
+  - name: publish-backend
     image: plugins/docker
     settings:
-      repo: maxlivinci/gollery-frontend
-      dockerfile: ./client
+      repo: maxlivinci/gollery-backend
       username:
         from_secret: docker_username
       password:
