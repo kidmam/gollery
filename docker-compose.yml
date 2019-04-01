@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   traefik:
@@ -7,8 +7,8 @@ services:
     restart: always
     command: --api --docker # Enables the web UI and tells Traefik to listen to docker
     ports:
-      - 80:80     # The HTTP port
-      - 443:443   # The HTTPs port
+      - 80:80 # The HTTP port
+      - 443:443 # The HTTPs port
     networks:
       - web
     volumes:
@@ -18,26 +18,40 @@ services:
     labels:
       - "traefik.enable=false"
 
-  webapp:
-    container_name: app
-    image: maxlivinci/gollery
+  frontend:
+    container_name: frontend
+    image: maxlivinci/gollery-frontend
     depends_on:
       - db
+      - backend
     restart: always
     networks:
       - web
     ports:
       - 3000:3000
-    volumes:
-      - ./volumes/images:/go/src/gollery/images
     environment:
-      - GO_ENV=dev_docker
+      - NODE_ENV=production
     labels:
       - "traefik.docker.network=web"
       - "traefik.enable=true"
       - "traefik.frontend.rule=Host:gollery.cc"
       - "traefik.basic.port=3000"
       - "traefik.basic.protocol=http"
+
+  backend:
+    container_name: backend
+    image: maxlivinci/gollery-backend
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - 8080:8080
+    volumes:
+      - ./volumes/images:/go/src/gollery/images
+    environment:
+      - GO_ENV=dev_docker
+    labels:
+      - "traefik.enable=false"
 
   db:
     container_name: postgres

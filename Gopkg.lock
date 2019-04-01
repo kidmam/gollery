@@ -81,6 +81,14 @@
   version = "v0.8.1"
 
 [[projects]]
+  digest = "1:b0c25f00bad20d783d259af2af8666969e2fc343fa0dc9efe52936bbd67fb758"
+  name = "github.com/rs/cors"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "9a47f48565a795472d43519dd49aac781f3034fb"
+  version = "v1.6.0"
+
+[[projects]]
   branch = "master"
   digest = "1:9d5b5d543996dd584da1db1e0de1926f3e4c3a8dba0fa2f8db70f3ebee2342e0"
   name = "golang.org/x/crypto"
@@ -108,6 +116,7 @@
     "github.com/gorilla/schema",
     "github.com/jinzhu/gorm",
     "github.com/jinzhu/gorm/dialects/postgres",
+    "github.com/rs/cors",
     "golang.org/x/crypto/bcrypt",
     "gopkg.in/mailgun/mailgun-go.v1",
   ]

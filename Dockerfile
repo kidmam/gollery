@@ -1,8 +1,6 @@
 # Start from golang v1.12 base image
 FROM golang:1.12 as builder
 
-LABEL maintainer="Max Li <maxlivinci@gmail.com>"
-
 # Download and install the latest release of dep
 ADD https://github.com/golang/dep/releases/download/v0.5.0/dep-linux-amd64 /usr/bin/dep
 RUN chmod +x /usr/bin/dep
