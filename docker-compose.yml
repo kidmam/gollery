@@ -44,6 +44,8 @@ services:
     depends_on:
       - db
     restart: always
+    networks:
+      - web
     ports:
       - 8080:8080
     volumes:
