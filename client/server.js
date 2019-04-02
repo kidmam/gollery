@@ -1,6 +1,6 @@
 const express = require("express")
 const next = require("next")
-const fetch = require("cross-fetch")
+const proxy = require("http-proxy-middleware")
 
 const config = require("./config/config")
 
@@ -12,22 +12,8 @@ const handle = app.getRequestHandler()
 app.prepare().then(() => {
   const server = express()
 
-  // APIs
-  server.get(`/api/v1/isLogin`, async (req, res) => {
-    try {
-      const r = await fetch(`${config.services.backend.url}/api/v1/isLogin`, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          cookie: req.headers.cookie
-        }
-      })
-      const isLogin = await r.json()
-      res.json(isLogin)
-    } catch (e) {
-      res.json(false)
-    }
-  })
+  server.use(proxy("/api/v1", { target: config.services.backend.url }))
+  server.use(proxy("/images", { target: config.services.backend.url }))
 
   server.get("/galleries/:id/edit", (req, res) => {
     return app.render(req, res, "/galleries/edit", req.params)

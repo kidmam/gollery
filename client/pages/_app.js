@@ -17,36 +17,37 @@ class MyApp extends App {
       pageProps = await Component.getInitialProps(ctx)
     }
 
-    let isLogin = false
-    if (!process.browser) {
-      try {
-        const res = await fetch(`${window.location.origin}/api/v1/isLogin`, {
-          method: "GET",
-          headers: {
-            cookie: ctx.req.headers.cookie
-          }
-        })
-        isLogin = await res.json()
-      } catch (e) {
-        isLogin = false
-      }
-    }
-
     return {
-      pageProps,
-      isLogin
+      pageProps
+    }
+  }
+
+  state = {
+    isLogin: false
+  }
+
+  async componentDidMount() {
+    try {
+      const res = await fetch(`${window.location.origin}/api/v1/isLogin`, {
+        method: "GET",
+        credentials: "include"
+      })
+      const isLogin = await res.json()
+      this.setState({ isLogin })
+    } catch (e) {
+      this.setState({ isLogin: false })
     }
   }
 
   render() {
-    const { Component, pageProps, isLogin } = this.props
+    const { Component, pageProps } = this.props
 
     return (
       <Container>
         <Head>
           <title>Gollery</title>
         </Head>
-        <Layout isLogin={isLogin}>
+        <Layout isLogin={this.state.isLogin}>
           <Component {...pageProps} />
         </Layout>
       </Container>
