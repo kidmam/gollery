@@ -71,7 +71,7 @@ $ docker-compose up -d
 - [x] Make https work. (Traefik)
 - [x] Persist data. (Docker Volume)
 - [x] Make CI/CD work. (Drone)
-- [ ] Separate frontend and backend.
+- [x] Separate frontend and backend.
 - [ ] Change SSH private key.
 - [ ] Clean up images after deletion.
 - [ ] GraphQL.
