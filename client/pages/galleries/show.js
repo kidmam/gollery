@@ -30,10 +30,10 @@ const Show = ({ id }) => {
       </div>
       <div className="row">
         {gallery.Images.map(img => (
-          <div className="col-md-4">
-            <a href={`${window.location.origin}/${img.Path}`}>
+          <div className="col-md-4" key={img.Path}>
+            <a href={`${window.location.origin}${img.Path}`}>
               <img
-                src={`${window.location.origin}/${img.Path}`}
+                src={`${window.location.origin}${img.Path}`}
                 className="thumbnail"
               />
             </a>

@@ -1,5 +1,5 @@
 import React from "react"
-import Router from "next/router"
+import Link from "next/link"
 
 const Header = ({ isLogin }) => {
   const handleSubmit = async e => {
@@ -30,20 +30,26 @@ const Header = ({ isLogin }) => {
             <span className="icon-bar" />
             <span className="icon-bar" />
           </button>
-          <a className="navbar-brand" href="/">
-            Gollery.com
-          </a>
+          <Link href="/">
+            <a className="navbar-brand">Gollery.com</a>
+          </Link>
         </div>
         <div id="navbar" className="navbar-collapse collapse">
           <ul className="nav navbar-nav">
             <li>
-              <a href="/">Home</a>
+              <Link href="/">
+                <a>Home</a>
+              </Link>
             </li>
             <li>
-              <a href="/contact">Contact</a>
+              <Link href="/contact">
+                <a>Contact</a>
+              </Link>
             </li>
             <li>
-              <a href="/galleries">Galleries</a>
+              <Link href="/galleries">
+                <a>Galleries</a>
+              </Link>
             </li>
           </ul>
           {isLogin && (
@@ -62,10 +68,14 @@ const Header = ({ isLogin }) => {
           {!isLogin && (
             <ul className="nav navbar-nav navbar-right">
               <li>
-                <a href="/login">Log In</a>
+                <Link href="/login">
+                  <a>Log In</a>
+                </Link>
               </li>
               <li>
-                <a href="/signup">Sign Up</a>
+                <Link href="/signup">
+                  <a>Sign Up</a>
+                </Link>
               </li>
             </ul>
           )}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 import Router from "next/router"
+import Link from "next/link"
 
 const Galleries = () => {
   const [galleries, setGalleries] = useState([])
@@ -33,22 +34,26 @@ const Galleries = () => {
           </thead>
           <tbody>
             {galleries.map(gallery => (
-              <tr>
+              <tr key={gallery.ID}>
                 <th scope="row">{gallery.ID}</th>
                 <td>{gallery.Title}</td>
                 <td>
-                  <a href={`/galleries/${gallery.ID}/show`}>View</a>
+                  <Link href={`/galleries/${gallery.ID}/show`}>
+                    <a>View</a>
+                  </Link>
                 </td>
                 <td>
-                  <a href={`/galleries/${gallery.ID}/edit`}>Edit</a>
+                  <Link href={`/galleries/${gallery.ID}/edit`}>
+                    <a>Edit</a>
+                  </Link>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <a href="/galleries/new" className="btn btn-primary">
-          New Gallery
-        </a>
+        <Link href="/galleries/new">
+          <a className="btn btn-primary">New Gallery</a>
+        </Link>
       </div>
     </div>
   )

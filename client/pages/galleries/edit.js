@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import Router from "next/router"
+import Link from "next/link"
 
 const Edit = ({ id }) => {
   const [title, setTitle] = useState("")
@@ -96,7 +97,9 @@ const Edit = ({ id }) => {
       <div className="row">
         <div className="col-md-10 col-md-offset-1">
           <h2>Edit your gallery</h2>
-          <a href={`/galleries/${id}/show`}>View this gallery</a>
+          <Link href={`/galleries/${id}/show`}>
+            <a>View this gallery</a>
+          </Link>
           <hr />
         </div>
         <div className="col-md-12">
@@ -132,9 +135,9 @@ const Edit = ({ id }) => {
         <div className="col-md-10">
           {galleryImages.map(image => (
             <div className="col-md-2" key={`${image.Path}`}>
-              <a href={`${window.location.origin}/${image.Path}`}>
+              <a href={`${window.location.origin}${image.Path}`}>
                 <img
-                  src={`${window.location.origin}/${image.Path}`}
+                  src={`${window.location.origin}${image.Path}`}
                   className="thumbnail"
                 />
               </a>
