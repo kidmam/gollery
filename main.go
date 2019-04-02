@@ -40,7 +40,7 @@ func main() {
 
 	mgCfg := cfg.Mailgun
 	emailer := email.NewClient(
-		email.WithSender("Gollery.com Support", "support@"+mgCfg.Domain),
+		email.WithSender("Gollery Support", "support@"+mgCfg.Domain),
 		email.WithMailgun(mgCfg.Domain, mgCfg.APIKey, mgCfg.PublicAPIKey),
 	)
 

@@ -8,14 +8,14 @@ import (
 )
 
 const (
-	welcomeSubject = "Welcome to Gollery.com!"
+	welcomeSubject = "Welcome to Gollery!"
 	resetSubject   = "Instructions for resetting your password."
-	resetBaseURL   = "https://www.gollery.com/reset"
+	resetBaseURL   = "https://www.gollery.cc/reset"
 )
 
 const welcomeText = `Hi there!
 
-Welcome to Gollery.com! We really hope you enjoy using
+Welcome to Gollery! We really hope you enjoy using
 our application!
 
 Best,
@@ -25,7 +25,7 @@ Max
 const welcomeHTML = `Hi there!<br/>
 <br/>
 Welcome to
-<a href="https://www.gollery.com">Gollery.com</a>! We really hope you enjoy using our application!<br/>
+<a href="https://www.gollery.cc">Gollery</a>! We really hope you enjoy using our application!<br/>
 <br/>
 Best,<br/>
 Max
@@ -81,7 +81,7 @@ type ClientConfig func(*Client)
 func NewClient(opts ...ClientConfig) *Client {
 	client := Client{
 		// Set a default from email address...
-		from: "support@gollery.com",
+		from: "support@gollery.cc",
 	}
 	for _, opt := range opts {
 		opt(&client)

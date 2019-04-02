@@ -31,7 +31,7 @@ const Header = ({ isLogin }) => {
             <span className="icon-bar" />
           </button>
           <Link href="/">
-            <a className="navbar-brand">Gollery.com</a>
+            <a className="navbar-brand">Gollery</a>
           </Link>
         </div>
         <div id="navbar" className="navbar-collapse collapse">
